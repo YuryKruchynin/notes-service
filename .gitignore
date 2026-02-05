@@ -20,10 +20,6 @@ bld/
 
 # Visual Studio cache/options
 .vs/
-.vscode/settings.json
-.vscode/tasks.json
-.vscode/launch.json
-.vscode/extensions.json
 *.suo
 *.user
 *.userosscache
@@ -78,8 +74,6 @@ _ReSharper*/
 
 # JetBrains Rider
 *.sln.iml
-.idea/
-*.sw[a-p]
 
 # NuGet Packages
 *.nupkg
@@ -128,7 +122,6 @@ nCrunchTemp_*
 ClientBin/
 [Ss]tyle[Cc]op.*
 ~$*
-*~
 *.dbmdl
 *.dbproj.schemaview
 *.jfm
@@ -153,7 +146,6 @@ dist/
 dist-ssr/
 build/
 .next/
-out/
 
 # Testing
 coverage/
@@ -178,10 +170,8 @@ lerna-debug.log*
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-.idea
 *.swp
 *.swo
-*~
 
 # Vite
 vite.config.js.timestamp-*
@@ -232,7 +222,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # Linux
-*~
 .fuse_hidden*
 .directory
 .Trash-*
@@ -268,7 +257,6 @@ out/
 [._]sw[a-p]
 
 # Emacs
-*~
 \#*\#
 /.emacs.desktop
 /.emacs.desktop.lock
@@ -286,8 +274,8 @@ tramp
 *.backup
 *.old
 *.orig
+*~
 
 # Temporary files
-*.tmp
 tmp/
 temp/
