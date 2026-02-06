@@ -20,14 +20,11 @@ public class InMemoryNotesRepository : INotesRepository
 
     public Task<Note> CreateAsync(Note note)
     {
-        if (note.Id == Guid.Empty)
-        {
-            note.Id = Guid.NewGuid();
-        }
+        var id = note.Id == Guid.Empty ? Guid.NewGuid() : note.Id;
 
         var newNote = new Note
         {
-            Id = note.Id,
+            Id = id,
             Title = note.Title,
             Content = note.Content,
             CreatedAt = DateTime.UtcNow,
@@ -44,29 +41,24 @@ public class InMemoryNotesRepository : INotesRepository
 
     public Task<Note?> UpdateAsync(Note note)
     {
+        // Check if the note exists before updating
+        if (!_notes.TryGetValue(note.Id, out var existingNote))
+        {
+            return Task.FromResult<Note?>(null);
+        }
+
         var updatedNote = new Note
         {
             Id = note.Id,
             Title = note.Title,
             Content = note.Content,
-            CreatedAt = note.CreatedAt,
+            CreatedAt = existingNote.CreatedAt,
             UpdatedAt = DateTime.UtcNow
         };
 
-        // Use AddOrUpdate to atomically update the note
-        var result = _notes.AddOrUpdate(
-            note.Id,
-            // If key doesn't exist, return null (not added)
-            _ => null!,
-            // If key exists, update it
-            (_, existingNote) =>
-            {
-                updatedNote.CreatedAt = existingNote.CreatedAt;
-                return updatedNote;
-            });
-
-        // If the result is null, the note didn't exist
-        return Task.FromResult(result == null ? null : updatedNote);
+        // Use indexer to update (safe because we verified existence)
+        _notes[note.Id] = updatedNote;
+        return Task.FromResult<Note?>(updatedNote);
     }
 
     public Task<bool> DeleteAsync(Guid id)
