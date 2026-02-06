@@ -1,0 +1,6 @@
+@Notes.Api_HostAddress = http://localhost:5138
+
+GET {{Notes.Api_HostAddress}}/swagger/v1/swagger.json
+Accept: application/json
+
+###
