@@ -6,6 +6,7 @@ namespace Notes.Api.Repositories;
 public class InMemoryNotesRepository : INotesRepository
 {
     private readonly ConcurrentDictionary<Guid, Note> _notes = new();
+    private readonly object _updateLock = new();
 
     public Task<IEnumerable<Note>> GetAllAsync()
     {
@@ -41,38 +42,26 @@ public class InMemoryNotesRepository : INotesRepository
 
     public Task<Note?> UpdateAsync(Note note)
     {
-        Note? result = null;
-        
-        _notes.AddOrUpdate(
-            note.Id,
-            // If key doesn't exist, don't add anything and return null
-            key => 
-            {
-                result = null;
-                return null!;
-            },
-            // If key exists, update it
-            (key, existingNote) =>
-            {
-                var updatedNote = new Note
-                {
-                    Id = note.Id,
-                    Title = note.Title,
-                    Content = note.Content,
-                    CreatedAt = existingNote.CreatedAt,
-                    UpdatedAt = DateTime.UtcNow
-                };
-                result = updatedNote;
-                return updatedNote;
-            });
-
-        // Clean up if we accidentally added a null entry
-        if (result == null)
+        lock (_updateLock)
         {
-            _notes.TryRemove(note.Id, out _);
-        }
+            // Check if the note exists
+            if (!_notes.TryGetValue(note.Id, out var existingNote))
+            {
+                return Task.FromResult<Note?>(null);
+            }
 
-        return Task.FromResult(result);
+            var updatedNote = new Note
+            {
+                Id = note.Id,
+                Title = note.Title,
+                Content = note.Content,
+                CreatedAt = existingNote.CreatedAt,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            _notes[note.Id] = updatedNote;
+            return Task.FromResult<Note?>(updatedNote);
+        }
     }
 
     public Task<bool> DeleteAsync(Guid id)
