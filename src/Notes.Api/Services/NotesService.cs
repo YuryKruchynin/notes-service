@@ -29,11 +29,8 @@ public class NotesService : INotesService
     {
         var note = new Note
         {
-            Id = Guid.NewGuid(),
             Title = dto.Title,
-            Content = dto.Content,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
+            Content = dto.Content
         };
 
         var createdNote = await _repository.CreateAsync(note);
@@ -42,20 +39,11 @@ public class NotesService : INotesService
 
     public async Task<NoteDto?> UpdateNoteAsync(Guid id, UpdateNoteDto dto)
     {
-        // Check if note exists first
-        var existingNote = await _repository.GetByIdAsync(id);
-        if (existingNote == null)
-        {
-            return null;
-        }
-
         var note = new Note
         {
             Id = id,
             Title = dto.Title,
-            Content = dto.Content,
-            CreatedAt = existingNote.CreatedAt,
-            UpdatedAt = DateTime.UtcNow
+            Content = dto.Content
         };
 
         var updatedNote = await _repository.UpdateAsync(note);
