@@ -28,13 +28,17 @@ public class InMemoryNotesRepository : INotesRepository
         note.CreatedAt = DateTime.UtcNow;
         note.UpdatedAt = DateTime.UtcNow;
 
-        _notes.TryAdd(note.Id, note);
+        if (!_notes.TryAdd(note.Id, note))
+        {
+            throw new InvalidOperationException($"A note with ID {note.Id} already exists.");
+        }
+
         return Task.FromResult(note);
     }
 
     public Task<Note?> UpdateAsync(Note note)
     {
-        if (!_notes.ContainsKey(note.Id))
+        if (!_notes.TryGetValue(note.Id, out _))
         {
             return Task.FromResult<Note?>(null);
         }
