@@ -25,27 +25,48 @@ public class InMemoryNotesRepository : INotesRepository
             note.Id = Guid.NewGuid();
         }
 
-        note.CreatedAt = DateTime.UtcNow;
-        note.UpdatedAt = DateTime.UtcNow;
-
-        if (!_notes.TryAdd(note.Id, note))
+        var newNote = new Note
         {
-            throw new InvalidOperationException($"A note with ID {note.Id} already exists.");
+            Id = note.Id,
+            Title = note.Title,
+            Content = note.Content,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+
+        if (!_notes.TryAdd(newNote.Id, newNote))
+        {
+            throw new InvalidOperationException($"A note with ID {newNote.Id} already exists.");
         }
 
-        return Task.FromResult(note);
+        return Task.FromResult(newNote);
     }
 
     public Task<Note?> UpdateAsync(Note note)
     {
-        if (!_notes.TryGetValue(note.Id, out _))
+        var updatedNote = new Note
         {
-            return Task.FromResult<Note?>(null);
-        }
+            Id = note.Id,
+            Title = note.Title,
+            Content = note.Content,
+            CreatedAt = note.CreatedAt,
+            UpdatedAt = DateTime.UtcNow
+        };
 
-        note.UpdatedAt = DateTime.UtcNow;
-        _notes[note.Id] = note;
-        return Task.FromResult<Note?>(note);
+        // Use AddOrUpdate to atomically update the note
+        var result = _notes.AddOrUpdate(
+            note.Id,
+            // If key doesn't exist, return null (not added)
+            _ => null!,
+            // If key exists, update it
+            (_, existingNote) =>
+            {
+                updatedNote.CreatedAt = existingNote.CreatedAt;
+                return updatedNote;
+            });
+
+        // If the result is null, the note didn't exist
+        return Task.FromResult(result == null ? null : updatedNote);
     }
 
     public Task<bool> DeleteAsync(Guid id)
