@@ -37,10 +37,10 @@ public class NotesController : ControllerBase
             var notes = await _notesService.GetAllNotesAsync();
             return Ok(notes);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return StatusCode(StatusCodes.Status500InternalServerError, 
-                new { message = "An error occurred while retrieving notes.", error = ex.Message });
+                new { message = "An error occurred while retrieving notes." });
         }
     }
 
@@ -66,10 +66,10 @@ public class NotesController : ControllerBase
             }
             return Ok(note);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return StatusCode(StatusCodes.Status500InternalServerError, 
-                new { message = "An error occurred while retrieving the note.", error = ex.Message });
+                new { message = "An error occurred while retrieving the note." });
         }
     }
 
@@ -91,10 +91,10 @@ public class NotesController : ControllerBase
             var note = await _notesService.CreateNoteAsync(createNoteDto);
             return CreatedAtAction(nameof(GetNoteById), new { id = note.Id }, note);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return StatusCode(StatusCodes.Status500InternalServerError, 
-                new { message = "An error occurred while creating the note.", error = ex.Message });
+                new { message = "An error occurred while creating the note." });
         }
     }
 
@@ -123,10 +123,10 @@ public class NotesController : ControllerBase
             }
             return Ok(note);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return StatusCode(StatusCodes.Status500InternalServerError, 
-                new { message = "An error occurred while updating the note.", error = ex.Message });
+                new { message = "An error occurred while updating the note." });
         }
     }
 
@@ -152,10 +152,10 @@ public class NotesController : ControllerBase
             }
             return NoContent();
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return StatusCode(StatusCodes.Status500InternalServerError, 
-                new { message = "An error occurred while deleting the note.", error = ex.Message });
+                new { message = "An error occurred while deleting the note." });
         }
     }
 }
