@@ -12,7 +12,7 @@ export interface Note {
 /**
  * Data transfer object for creating a new note
  */
-export interface CreateNote {
+export interface CreateNoteDto {
   title: string;
   content: string;
 }
