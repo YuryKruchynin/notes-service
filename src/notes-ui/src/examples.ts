@@ -6,14 +6,14 @@
  */
 
 import { notesApi, NotesApiError } from './api';
-import type { CreateNote, UpdateNote } from './types';
+import type { CreateNoteDto, UpdateNote } from './types';
 
 /**
  * Example: Fetch all notes
  */
 async function getAllNotesExample() {
   try {
-    const notes = await notesApi.getAllNotes();
+    const notes = await notesApi.getNotes();
     console.log('All notes:', notes);
     return notes;
   } catch (error) {
@@ -50,7 +50,7 @@ async function getNoteByIdExample(id: string) {
  * Example: Create a new note
  */
 async function createNoteExample() {
-  const newNote: CreateNote = {
+  const newNote: CreateNoteDto = {
     title: 'My New Note',
     content: 'This is the content of my new note.',
   };

@@ -1,4 +1,4 @@
-import type { Note, CreateNote, UpdateNote, ApiError } from '../types/note';
+import type { Note, CreateNoteDto, UpdateNote, ApiError } from '../types/note';
 
 /**
  * Configuration for the API client
@@ -53,7 +53,7 @@ export const notesApi = {
    * Retrieves all notes from the API
    * @returns Promise resolving to an array of notes
    */
-  async getAllNotes(): Promise<Note[]> {
+  async getNotes(): Promise<Note[]> {
     const response = await fetch(`${API_BASE_URL}/notes`, {
       method: 'GET',
       headers: {
@@ -85,7 +85,7 @@ export const notesApi = {
    * @param note - The note data to create
    * @returns Promise resolving to the created note
    */
-  async createNote(note: CreateNote): Promise<Note> {
+  async createNote(note: CreateNoteDto): Promise<Note> {
     const response = await fetch(`${API_BASE_URL}/notes`, {
       method: 'POST',
       headers: {
