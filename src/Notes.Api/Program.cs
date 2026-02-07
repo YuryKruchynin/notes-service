@@ -32,6 +32,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Apply CORS middleware before authorization
 app.UseCors("AllowFrontend");
 
 app.MapControllers();
