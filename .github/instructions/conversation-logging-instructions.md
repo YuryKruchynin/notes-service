@@ -120,6 +120,14 @@ Use: "Completed: 1) Created config 2) Updated routes 3) Added tests"
 - **Version control:** Commit logs to git for history tracking
 - **Backup:** Regularly backup logs to prevent data loss
 
+## Daily Log Splitting
+
+- **Each day's conversation must be stored in a separate file.**
+- Use the format: `conversation-log-YYYY-MM-DD.md` for each day.
+- Start a new log file at the beginning of each new day (based on system date).
+- Do not append new conversations to previous days' logs.
+- Ensure all exchanges for a given date are recorded only in that day's file.
+
 ## Quality Checks
 
 Before finalizing a log entry, verify:
