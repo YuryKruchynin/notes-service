@@ -29,10 +29,19 @@ public class NotesController : ControllerBase
     /// <response code="200">Returns the list of notes</response>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<NoteDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<IEnumerable<NoteDto>>> GetAllNotes()
     {
-        var notes = await _notesService.GetAllNotesAsync();
-        return Ok(notes);
+        try
+        {
+            var notes = await _notesService.GetAllNotesAsync();
+            return Ok(notes);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, 
+                new { message = "An error occurred while retrieving notes." });
+        }
     }
 
     /// <summary>
@@ -45,14 +54,23 @@ public class NotesController : ControllerBase
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(NoteDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<NoteDto>> GetNoteById(Guid id)
     {
-        var note = await _notesService.GetNoteByIdAsync(id);
-        if (note == null)
+        try
         {
-            return NotFound();
+            var note = await _notesService.GetNoteByIdAsync(id);
+            if (note == null)
+            {
+                return NotFound(new { message = $"Note with ID {id} not found." });
+            }
+            return Ok(note);
         }
-        return Ok(note);
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, 
+                new { message = "An error occurred while retrieving the note." });
+        }
     }
 
     /// <summary>
@@ -65,10 +83,19 @@ public class NotesController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(NoteDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<NoteDto>> CreateNote([FromBody] CreateNoteDto createNoteDto)
     {
-        var note = await _notesService.CreateNoteAsync(createNoteDto);
-        return CreatedAtAction(nameof(GetNoteById), new { id = note.Id }, note);
+        try
+        {
+            var note = await _notesService.CreateNoteAsync(createNoteDto);
+            return CreatedAtAction(nameof(GetNoteById), new { id = note.Id }, note);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, 
+                new { message = "An error occurred while creating the note." });
+        }
     }
 
     /// <summary>
@@ -84,14 +111,23 @@ public class NotesController : ControllerBase
     [ProducesResponseType(typeof(NoteDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<NoteDto>> UpdateNote(Guid id, [FromBody] UpdateNoteDto updateNoteDto)
     {
-        var note = await _notesService.UpdateNoteAsync(id, updateNoteDto);
-        if (note == null)
+        try
         {
-            return NotFound();
+            var note = await _notesService.UpdateNoteAsync(id, updateNoteDto);
+            if (note == null)
+            {
+                return NotFound(new { message = $"Note with ID {id} not found." });
+            }
+            return Ok(note);
         }
-        return Ok(note);
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, 
+                new { message = "An error occurred while updating the note." });
+        }
     }
 
     /// <summary>
@@ -104,13 +140,22 @@ public class NotesController : ControllerBase
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteNote(Guid id)
     {
-        var success = await _notesService.DeleteNoteAsync(id);
-        if (!success)
+        try
         {
-            return NotFound();
+            var success = await _notesService.DeleteNoteAsync(id);
+            if (!success)
+            {
+                return NotFound(new { message = $"Note with ID {id} not found." });
+            }
+            return NoContent();
         }
-        return NoContent();
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, 
+                new { message = "An error occurred while deleting the note." });
+        }
     }
 }
