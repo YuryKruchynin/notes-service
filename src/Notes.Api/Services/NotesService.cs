@@ -15,44 +15,79 @@ public class NotesService : INotesService
 
     public async Task<IEnumerable<NoteDto>> GetAllNotesAsync()
     {
-        var notes = await _repository.GetAllAsync();
-        return notes.Select(MapToDto);
+        try
+        {
+            var notes = await _repository.GetAllAsync();
+            return notes.Select(MapToDto);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("Failed to retrieve notes from repository.", ex);
+        }
     }
 
     public async Task<NoteDto?> GetNoteByIdAsync(Guid id)
     {
-        var note = await _repository.GetByIdAsync(id);
-        return note == null ? null : MapToDto(note);
+        try
+        {
+            var note = await _repository.GetByIdAsync(id);
+            return note == null ? null : MapToDto(note);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"Failed to retrieve note with ID {id} from repository.", ex);
+        }
     }
 
     public async Task<NoteDto> CreateNoteAsync(CreateNoteDto dto)
     {
-        var note = new Note
+        try
         {
-            Title = dto.Title,
-            Content = dto.Content
-        };
+            var note = new Note
+            {
+                Title = dto.Title,
+                Content = dto.Content
+            };
 
-        var createdNote = await _repository.CreateAsync(note);
-        return MapToDto(createdNote);
+            var createdNote = await _repository.CreateAsync(note);
+            return MapToDto(createdNote);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("Failed to create note in repository.", ex);
+        }
     }
 
     public async Task<NoteDto?> UpdateNoteAsync(Guid id, UpdateNoteDto dto)
     {
-        var note = new Note
+        try
         {
-            Id = id,
-            Title = dto.Title,
-            Content = dto.Content
-        };
+            var note = new Note
+            {
+                Id = id,
+                Title = dto.Title,
+                Content = dto.Content
+            };
 
-        var updatedNote = await _repository.UpdateAsync(note);
-        return updatedNote == null ? null : MapToDto(updatedNote);
+            var updatedNote = await _repository.UpdateAsync(note);
+            return updatedNote == null ? null : MapToDto(updatedNote);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"Failed to update note with ID {id} in repository.", ex);
+        }
     }
 
     public async Task<bool> DeleteNoteAsync(Guid id)
     {
-        return await _repository.DeleteAsync(id);
+        try
+        {
+            return await _repository.DeleteAsync(id);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"Failed to delete note with ID {id} from repository.", ex);
+        }
     }
 
     private static NoteDto MapToDto(Note note)
