@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { Note, CreateNoteDto } from '../types/note';
 import { notesApi } from '../api/notesApi';
 
@@ -38,7 +38,7 @@ export function useNotes(): UseNotesReturn {
   /**
    * Fetches all notes from the API
    */
-  const fetchNotes = async (): Promise<void> => {
+  const fetchNotes = useCallback(async (): Promise<void> => {
     setLoading(true);
     setError(null);
     
@@ -51,7 +51,7 @@ export function useNotes(): UseNotesReturn {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   /**
    * Adds a new note to the list
@@ -90,7 +90,7 @@ export function useNotes(): UseNotesReturn {
   // Fetch notes on mount
   useEffect(() => {
     fetchNotes();
-  }, []);
+  }, [fetchNotes]);
 
   return {
     notes,
