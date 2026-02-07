@@ -57,7 +57,7 @@ export function useNotes(): UseNotesReturn {
    * Adds a new note to the list
    * @param data - The note data to create
    */
-  const addNote = async (data: CreateNoteDto): Promise<void> => {
+  const addNote = useCallback(async (data: CreateNoteDto): Promise<void> => {
     setError(null);
     
     try {
@@ -68,13 +68,13 @@ export function useNotes(): UseNotesReturn {
       setError(errorMessage);
       throw err; // Re-throw to allow caller to handle
     }
-  };
+  }, []);
 
   /**
    * Removes a note from the list
    * @param id - The ID of the note to remove
    */
-  const removeNote = async (id: string): Promise<void> => {
+  const removeNote = useCallback(async (id: string): Promise<void> => {
     setError(null);
     
     try {
@@ -85,7 +85,7 @@ export function useNotes(): UseNotesReturn {
       setError(errorMessage);
       throw err; // Re-throw to allow caller to handle
     }
-  };
+  }, []);
 
   // Fetch notes on mount
   useEffect(() => {
