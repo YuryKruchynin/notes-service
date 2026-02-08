@@ -14,13 +14,17 @@ A full-stack notes application with ASP.NET Core Web API backend and React front
 ## 🛠️ Technology Stack
 
 ### Backend
-- **ASP.NET Core Web API** - RESTful API framework
-- **.NET** - Runtime and framework
+- **ASP.NET Core Web API 10.0** - RESTful API framework
+- **.NET 10** - Runtime and framework
+- **In-Memory Storage** - For data persistence
+- **Swagger/OpenAPI** - API documentation and testing
 
 ### Frontend
-- **React** - UI library
-- **TypeScript** - Type-safe JavaScript
-- **Vite** - Fast build tool and dev server
+- **React 19** - UI library for building user interfaces
+- **TypeScript 5.9** - Type-safe JavaScript
+- **Vite 7** - Fast build tool and development server
+- **ESLint** - Code quality and linting
+- **CSS3** - Styling
 
 ## 📁 Project Structure
 
@@ -32,7 +36,23 @@ notes-service/
 │   └── project-structure.md   # Detailed project structure reference
 ├── src/                        # Source code
 │   ├── Notes.Api/             # Backend API (.NET)
+│   │   ├── Controllers/       # API endpoints
+│   │   ├── DTOs/              # Data Transfer Objects
+│   │   ├── Models/            # Domain models
+│   │   ├── Repositories/      # Data access layer
+│   │   ├── Services/          # Business logic
+│   │   └── Program.cs         # Application entry point
 │   └── notes-ui/              # Frontend UI (React + TypeScript + Vite)
+│       ├── src/
+│       │   ├── api/           # API client
+│       │   ├── components/    # Reusable UI components
+│       │   ├── hooks/         # Custom React hooks
+│       │   ├── pages/         # Page components
+│       │   ├── types/         # TypeScript type definitions
+│       │   ├── App.tsx        # Main app component
+│       │   └── main.tsx       # Application entry point
+│       ├── package.json       # Dependencies and scripts
+│       └── vite.config.ts     # Vite configuration
 └── README.md                   # This file
 ```
 
@@ -43,12 +63,12 @@ For detailed project structure information, see [project-structure.md](./Docs/pr
 Before you begin, ensure you have the following installed:
 
 ### For Backend Development
-- [.NET SDK](https://dotnet.microsoft.com/download) (version 6.0 or later)
+- [.NET SDK](https://dotnet.microsoft.com/download) (version 8.0 or later)
 - A code editor (Visual Studio, Visual Studio Code, or JetBrains Rider recommended)
 
 ### For Frontend Development
-- [Node.js](https://nodejs.org/) (version 16.x or later)
-- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/) package manager
+- [Node.js](https://nodejs.org/) (version 18.x or later)
+- [npm](https://www.npmjs.com/) package manager (comes with Node.js)
 - A code editor (Visual Studio Code recommended)
 
 ### Optional
@@ -59,60 +79,283 @@ Before you begin, ensure you have the following installed:
 
 ### Backend Setup
 
-> **Note**: Detailed backend setup instructions will be added as the API is developed.
+1. **Navigate to the backend directory**
+   ```bash
+   cd src/Notes.Api
+   ```
 
-```bash
-# Navigate to the backend directory
-cd src/Notes.Api
+2. **Restore dependencies**
+   ```bash
+   dotnet restore
+   ```
 
-# Restore dependencies
-dotnet restore
+3. **Build the project**
+   ```bash
+   dotnet build
+   ```
 
-# Build the project
-dotnet build
+4. **Run the application**
+   ```bash
+   dotnet run
+   ```
 
-# Run the application
-dotnet run
-```
+The API will be available at:
+- **HTTP**: `http://localhost:5138`
+- **HTTPS**: `https://localhost:7257`
 
-The API will be available at `https://localhost:5001` (or the port specified in your configuration).
+The API includes Swagger UI for testing and documentation, accessible at `http://localhost:5138/swagger` when the application is running.
 
 ### Frontend Setup
 
-> **Note**: Detailed frontend setup instructions will be added as the UI is developed.
+1. **Navigate to the frontend directory**
+   ```bash
+   cd src/notes-ui
+   ```
 
-```bash
-# Navigate to the frontend directory
-cd src/notes-ui
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-# Install dependencies
-npm install
+3. **Configure environment variables (optional)**
+   
+   Copy the example environment file:
+   ```bash
+   cp .env.example .env
+   ```
+   
+   The default configuration connects to `http://localhost:5138/api`. Update `.env` if your backend runs on a different port:
+   ```env
+   VITE_API_BASE_URL=http://localhost:5138/api
+   ```
 
-# Start the development server
-npm run dev
-```
+4. **Start the development server**
+   ```bash
+   npm run dev
+   ```
 
-The application will be available at `http://localhost:5173` (default Vite port).
+The frontend application will be available at `http://localhost:5173` (default Vite port).
+
+### Additional Frontend Commands
+
+- **Build for production**
+  ```bash
+  npm run build
+  ```
+
+- **Preview production build**
+  ```bash
+  npm run preview
+  ```
+
+- **Lint code**
+  ```bash
+  npm run lint
+  ```
+
+## 🚀 Running the Application
+
+To run the complete application, you need to start both the backend and frontend servers:
+
+1. **Start the Backend** (in terminal 1)
+   ```bash
+   cd src/Notes.Api
+   dotnet run
+   ```
+   Wait for the message indicating the server is running (usually shows `Now listening on: http://localhost:5138`)
+
+2. **Start the Frontend** (in terminal 2)
+   ```bash
+   cd src/notes-ui
+   npm run dev
+   ```
+   The frontend will open at `http://localhost:5173`
+
+3. **Access the Application**
+   - Frontend UI: `http://localhost:5173`
+   - Backend API: `http://localhost:5138`
+   - Swagger UI: `http://localhost:5138/swagger`
+
+The frontend will automatically communicate with the backend API to perform CRUD operations on notes.
 
 ## 📚 API Documentation
 
-> **Note**: Comprehensive API documentation will be added here once the API endpoints are implemented.
+The Notes Service API provides a RESTful interface for managing notes. All endpoints are prefixed with `/api/notes`.
 
-### Planned Endpoints
+### Base URL
+- Development: `http://localhost:5138/api`
+- Swagger UI: `http://localhost:5138/swagger`
 
-The Notes Service API will provide the following endpoints:
+### Endpoints
 
-- `GET /api/notes` - Retrieve all notes
-- `GET /api/notes/{id}` - Retrieve a specific note by ID
-- `POST /api/notes` - Create a new note
-- `PUT /api/notes/{id}` - Update an existing note
-- `DELETE /api/notes/{id}` - Delete a note
+#### Get All Notes
+```http
+GET /api/notes
+```
 
-Documentation format will include:
-- Request/response examples
-- Parameter descriptions
-- Status codes
-- Error handling
+**Response:**
+- **200 OK**: Returns an array of notes
+- **500 Internal Server Error**: Server error occurred
+
+**Example Response:**
+```json
+[
+  {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "title": "My First Note",
+    "content": "This is the content of my note",
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z"
+  }
+]
+```
+
+#### Get Note by ID
+```http
+GET /api/notes/{id}
+```
+
+**Parameters:**
+- `id` (path parameter): GUID of the note
+
+**Response:**
+- **200 OK**: Returns the requested note
+- **404 Not Found**: Note doesn't exist
+- **500 Internal Server Error**: Server error occurred
+
+#### Create Note
+```http
+POST /api/notes
+```
+
+**Request Body:**
+```json
+{
+  "title": "My New Note",
+  "content": "This is the content"
+}
+```
+
+**Response:**
+- **201 Created**: Note created successfully
+- **400 Bad Request**: Invalid request data
+- **500 Internal Server Error**: Server error occurred
+
+**Example Response:**
+```json
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "title": "My New Note",
+  "content": "This is the content",
+  "createdAt": "2024-01-15T10:30:00Z",
+  "updatedAt": "2024-01-15T10:30:00Z"
+}
+```
+
+#### Update Note
+```http
+PUT /api/notes/{id}
+```
+
+**Parameters:**
+- `id` (path parameter): GUID of the note to update
+
+**Request Body:**
+```json
+{
+  "title": "Updated Title",
+  "content": "Updated content"
+}
+```
+
+**Response:**
+- **200 OK**: Note updated successfully
+- **404 Not Found**: Note doesn't exist
+- **400 Bad Request**: Invalid request data
+- **500 Internal Server Error**: Server error occurred
+
+#### Delete Note
+```http
+DELETE /api/notes/{id}
+```
+
+**Parameters:**
+- `id` (path parameter): GUID of the note to delete
+
+**Response:**
+- **204 No Content**: Note deleted successfully
+- **404 Not Found**: Note doesn't exist
+- **500 Internal Server Error**: Server error occurred
+
+### Data Models
+
+#### NoteDto
+```typescript
+{
+  id: string;           // GUID
+  title: string;        // Note title
+  content: string;      // Note content
+  createdAt: string;    // ISO 8601 datetime
+  updatedAt: string;    // ISO 8601 datetime
+}
+```
+
+#### CreateNoteDto
+```typescript
+{
+  title: string;        // Note title (required)
+  content: string;      // Note content (required)
+}
+```
+
+#### UpdateNoteDto
+```typescript
+{
+  title: string;        // Updated title (required)
+  content: string;      // Updated content (required)
+}
+```
+
+## 🔧 Troubleshooting
+
+### Backend Issues
+
+**Port already in use**
+- Error: `Address already in use`
+- Solution: Change the port in `src/Notes.Api/Properties/launchSettings.json` or stop the process using the port
+
+**Build errors**
+- Ensure you have .NET 8.0 or later installed: `dotnet --version`
+- Try cleaning the build: `dotnet clean` then `dotnet build`
+
+### Frontend Issues
+
+**Port 5173 already in use**
+- Solution: The dev server will automatically try the next available port (5174, 5175, etc.)
+- Or manually specify a port in `vite.config.ts`
+
+**API connection errors**
+- Check that the backend is running on `http://localhost:5138`
+- Verify the `VITE_API_BASE_URL` in your `.env` file
+- Check browser console for CORS errors
+
+**Node modules issues**
+- Delete `node_modules` folder and `package-lock.json`
+- Run `npm install` again
+
+**ESLint errors**
+- Run `npm run lint` to see all linting issues
+- Most formatting issues can be auto-fixed
+
+### Common Issues
+
+**CORS errors when connecting frontend to backend**
+- The backend is configured to allow requests from `http://localhost:5173`
+- If using a different port, the backend CORS policy needs to be updated in `Program.cs`
+
+**Changes not reflecting**
+- Backend: Restart the `dotnet run` process
+- Frontend: Vite has hot module replacement (HMR), but sometimes a browser refresh is needed
 
 ## 🤝 Contributing
 
