@@ -15,7 +15,7 @@ export interface NoteItemProps {
  */
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
-  return date.toLocaleString('en-US', {
+  return date.toLocaleString(undefined, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
