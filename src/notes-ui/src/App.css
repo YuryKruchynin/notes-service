@@ -267,7 +267,7 @@
   left: 0;
   width: 4px;
   height: 100%;
-  background: linear-gradient(180deg, #646cff 0%, #535bf2 100%);
+  background: linear-gradient(180deg, #7c84ff 0%, #646cff 100%);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
